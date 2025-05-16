@@ -144,11 +144,7 @@ argoCD:
               enabled: true
               annotations:
                 cert-manager.io/cluster-issuer: letsencrypt
-              hosts:
-                - host: "{{ include \"k3s.appHostname\" (dict \"Values\" $.Values \"Release\" $.Release \"name\" \"demo\") }}"
-                  paths:
-                    - path: /
-                      pathType: ImplementationSpecific
+              host: "{{ include \"k3s.appHostname\" (dict \"Values\" $.Values \"Release\" $.Release \"name\" \"demo\") }}"
               tls:
                 - secretName: demo-tls
                   hosts:
