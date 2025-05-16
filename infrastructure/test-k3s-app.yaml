@@ -27,6 +27,8 @@ spec:
           storageClassNameK3s: local-path
         service:
           type: ClusterIP
+          domains:
+            - meetup.koendelaat.nl
   ignoreDifferences:
     - kind: Secret
       jsonPointers:
