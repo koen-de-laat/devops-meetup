@@ -1,0 +1,8 @@
+name: rancher-demo
+apiVersion: v2
+version: 0.1.0
+
+dependencies:
+  - name: rancher-demo
+    version: 2.1.7
+    repository: https://rancher.github.io/rodeo

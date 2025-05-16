@@ -1,0 +1,13 @@
+rancher-demo:
+  replicaCount: 3
+
+  app:
+    localization:
+      title: "DevOps MeetUp Demo App"
+      pets: "cows"  # available pets include 'cows' and 'chameleons' and possibly 'cowmeleons'
+      color: "black"  # container background color (any color name from the CSS pallete)
+
+  ingress:
+    enabled: true
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
