@@ -25,6 +25,8 @@ spec:
               skip-default-apps: "true"
         storage:
           storageClassNameK3s: local-path
+        service:
+          type: ClusterIP
   ignoreDifferences:
     - kind: Secret
       jsonPointers:

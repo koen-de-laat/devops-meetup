@@ -30,12 +30,11 @@ securityContext:
 service:
   type: LoadBalancer
   hostname: ""
-  domains:
-    - "lws.igtcloud.philips.com"
+  domains: []
 
-serviceAnnotations:
-  service.beta.kubernetes.io/aws-load-balancer-type: "nlb-ip"
-  service.beta.kubernetes.io/aws-load-balancer-internal: "false"
+serviceAnnotations: {}
+#  service.beta.kubernetes.io/aws-load-balancer-type: "nlb-ip"
+#  service.beta.kubernetes.io/aws-load-balancer-internal: "false"
 
 resources:
   limits:
