@@ -82,6 +82,8 @@ argoCD:
   enabled: true
   namespace: argocd
   appNamespace: ""
+  cluster:
+    labels: {}
   project:
     name: ""
     groups:

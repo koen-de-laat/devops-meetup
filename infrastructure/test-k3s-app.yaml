@@ -15,11 +15,14 @@ spec:
     repoURL: https://github.com/koen-de-laat/devops-meetup
     targetRevision: HEAD
     helm:
-      parameters:
-        - name: argoCD.applications.targetRevision
-          value: $ARGOCD_APP_SOURCE_TARGET_REVISION
-        - name: argoCD.appNamespace
-          value: meetup
+      valuesObject:
+        argoCD:
+          applications:
+            targetRevisions: $ARGOCD_APP_SOURCE_TARGET_REVISION
+          appNamespace: meetup
+          cluster:
+            labels:
+              skip-default-apps: "true"
   ignoreDifferences:
     - kind: Secret
       jsonPointers:
