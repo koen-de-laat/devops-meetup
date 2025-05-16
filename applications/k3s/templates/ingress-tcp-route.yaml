@@ -13,4 +13,17 @@ spec:
           port: 443
   tls:
     passthrough: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "k3s.fullname" . }}
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`{{ include "k3s.apiHostExternal" . }}`)
+      services:
+        - name: {{ include "k3s.fullname" . }}
+          port: 80
 {{- end }}

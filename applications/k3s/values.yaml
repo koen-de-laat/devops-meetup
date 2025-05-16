@@ -118,7 +118,7 @@ argoCD:
           ingress:
             enabled: true
             annotations:
-              cert-manager.io/cluster-issuer: letsencrypt-prod
+              cert-manager.io/cluster-issuer: letsencrypt
             hosts:
               - host: "{{ include \"k3s.appHostname\" (dict \"Values\" $.Values \"Release\" $.Release \"name\" \"hello\") }}"
                 paths:
