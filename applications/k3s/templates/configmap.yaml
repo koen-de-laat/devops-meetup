@@ -7,6 +7,8 @@ data:
     cluster-domain: cluster.local
     write-kubeconfig: /output/kubeconfig.yaml
     write-kubeconfig-mode: 644
+    cluster-cidr: 10.99.0.0/16
+    service-cidr: 10.100.0.0/16
     node-name: meetup-node
     tls-san:
       - {{ include "k3s.apiHost" .}}
@@ -22,4 +24,4 @@ data:
       - {{ printf "oidc-username-prefix=%s" .Values.oidc.usernamePrefix | quote }}
       - {{ printf "oidc-groups-claim=%s" .Values.oidc.groupsClaim | quote }}
       - {{ printf "oidc-groups-prefix=%s" .Values.oidc.groupsPrefix | quote }}
-{{- end }}
+      {{- end }}
