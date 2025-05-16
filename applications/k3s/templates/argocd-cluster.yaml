@@ -1,0 +1,15 @@
+{{- if .Values.argoCD.enabled }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "k3s.fullname" . }}
+  namespace: {{ .Values.argoCD.namespace }}
+  labels:
+    argocd.argoproj.io/secret-type: cluster
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+data:
+  name: {{ include "k3s.fullname" . | b64enc }}
+  server: {{ include "k3s.apiUrl" . | b64enc }}
+type: Opaque
+{{- end }}

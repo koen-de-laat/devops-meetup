@@ -1,0 +1,29 @@
+{{- if .Values.argoCD.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  name: {{ include "k3s.argocdProject" . }}
+  namespace: {{ .Values.argoCD.namespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  destinations:
+    - namespace: '*'
+      server: {{ include "k3s.apiUrl" . }}
+  sourceRepos:
+    - '*'
+{{- with .Values.argoCD.project.groups }}
+  roles:
+    # A role which provides access to all applications in the project
+    - name: admin
+      description: Admin privileges to {{ include "k3s.argocdProject" $ }}
+      policies:
+        - p, proj:{{ include "k3s.argocdProject" $ }}:admin, applications, *, {{ include "k3s.argocdProject" $ }}/*, allow
+      groups: {{ . }}
+{{- end }}
+{{- end }}

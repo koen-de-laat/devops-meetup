@@ -1,0 +1,8 @@
+*.tgz
+*.exe
+Chart.lock
+.idea
+.vs
+**secret.y*ml
+**secrets.y*ml
+*.dcm

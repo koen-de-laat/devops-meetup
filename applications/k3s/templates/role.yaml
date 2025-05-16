@@ -1,0 +1,12 @@
+{{- if .Values.argoCD.enabled }}
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ default (include "k3s.fullname" .) .Values.serviceAccount.roleName }}
+  namespace: {{ .Values.argoCD.namespace }}
+rules:
+- apiGroups: [""] # Empty string for kubernetes system
+  resources: [secrets]
+  resourceNames: [{{ include "k3s.fullname" . }}]
+  verbs: [get, patch]
+{{- end }}

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: k3s-config
+data:
+  config.yaml: |
+    cluster-domain: cluster.local
+    write-kubeconfig: /output/kubeconfig.yaml
+    write-kubeconfig-mode: 644
+    node-name: lws
+    tls-san: {{ include "k3s.apiHost" .}}
+{{- if .Values.postgresql.enabled }}
+    datastore-endpoint: {{ include "k3s.datastore-endpoint" . }}
+{{- end }}

@@ -1,0 +1,41 @@
+{{- if .Values.argoCD.enabled }}
+{{- range $name, $spec := .Values.argoCD.applications.specs }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: '{{ printf "%s-%s" $.Release.Name $name }}'
+  namespace: {{ $.Values.argoCD.namespace }}
+{{- with merge ($spec.annotations | default dict) $.Values.argoCD.applications.annotations}}
+  annotations:
+{{- toYaml . | nindent 4 }}
+{{- end }}
+{{- if not (and ( hasKey $spec "finalizers" ) (not $spec.finalizers )) }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+{{- end}}
+spec:
+  destination:
+    namespace: {{ $spec.namespace | default $name}}
+    server: {{ include "k3s.apiUrl" $ }}
+  project: {{ include "k3s.argocdProject" $ }}
+  source:
+{{- with $spec.path }}
+    path: {{ . }}
+{{- end }}
+{{- with $spec.chart }}
+    chart: {{ . }}
+{{- end }}
+    repoURL: {{ $spec.repoUrl | default $.Values.argoCD.applications.repoUrl }}
+    targetRevision: {{ $spec.targetRevision | default $.Values.argoCD.applications.targetRevision }}
+{{- if hasKey $spec "values" }}
+    helm:
+      releaseName: {{ $name }}
+      values: {{ ( tpl (toYaml $spec.values) $ ) | fromYaml | toJson  | quote }}
+{{- end }}
+{{- with $spec.syncPolicy | default $.Values.argoCD.applications.syncPolicy}}
+  syncPolicy:
+{{- toYaml . | nindent 4 }}
+{{- end }}
+---
+{{- end }}
+{{- end }}

@@ -1,0 +1,166 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "k3s.fullname" . }}
+  labels:
+    {{- include "k3s.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "k3s.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "k3s.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "k3s.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: k3s
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - server
+          ports:
+            - name: api
+              containerPort: 6443
+              protocol: TCP
+            - name: http
+              containerPort: 80
+              protocol: TCP
+            - name: https
+              containerPort: 443
+              protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - KUBECONFIG=/output/kubeconfig.yaml kubectl get --raw='/readyz'
+            periodSeconds: 10
+            failureThreshold: 6
+            timeoutSeconds: 2
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - KUBECONFIG=/output/kubeconfig.yaml kubectl get --raw='/livez'
+            periodSeconds: 10
+            failureThreshold: 6
+            timeoutSeconds: 2
+          startupProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - KUBECONFIG=/output/kubeconfig.yaml kubectl get --raw='/readyz'
+            periodSeconds: 10
+            failureThreshold: 30
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /var/lib/rancher/k3s
+              name: k3s-server
+            - mountPath: /run
+              name: server-tmpfs0
+            - mountPath: /var/run
+              name: server-tmpfs1
+            - mountPath: /etc/rancher/k3s
+              name: k3s-config
+            - mountPath: /output
+              name: kubeconfig
+        - name: kubeconfig
+          image: alpine/k8s:1.26.6
+          command:
+            - /bin/sh
+            - -c
+            - |
+              apk add inotify-tools curl
+              until [ -f /output/kubeconfig.yaml ]; do sleep 1; done
+{{- if .Values.argoCD.enabled }}
+              cat /output/kubeconfig.yaml | yq -o json '{"tlsClientConfig": { "insecure": false, "caData": .clusters[0].cluster."certificate-authority-data", "certData": .users[0].user."client-certificate-data", "keyData": .users[0].user."client-key-data" }}' | base64 -w0 | jq --raw-input '[{ "op": "replace", "path": "/data/config", "value": .}]' > /tmp/secret_patch.json
+              kubectl -n {{ .Values.argoCD.namespace }} patch secret {{ include "k3s.fullname" . }} --type='json' --patch-file=/tmp/secret_patch.json
+{{- end }}
+              until KUBECONFIG=/output/kubeconfig.yaml kubectl get --raw='/readyz' | grep -q 'ok'
+              do
+              echo "Waiting for cluster ready"
+              sleep 1
+              done
+              touch /tmp/ready
+
+              echo "---"
+              cat /output/kubeconfig.yaml | yq -o yaml  '.clusters[0].cluster.server="{{ include "k3s.apiUrlExternal" . }}" | .clusters[0].name="{{ include "k3s.fullname" . }}" | .users[0].name="{{ include "k3s.fullname" . }}" | .contexts[0].name="{{ include "k3s.fullname" . }}" | .contexts[0].context.cluster="{{ include "k3s.fullname" . }}" | .contexts[0].context.user="{{ include "k3s.fullname" . }}" | .current-context="{{ include "k3s.fullname" . }}"'
+              echo "---"
+
+              while inotifywait -t 60 -e close_write /output || true ; do
+{{- if .Values.argoCD.enabled }}
+              KUBECONFIG=/output/kubeconfig.yaml kubectl delete node $(KUBECONFIG=/output/kubeconfig.yaml kubectl get nodes | grep NotReady | awk '{print $1;}')
+              cat /output/kubeconfig.yaml | yq -o json '{"tlsClientConfig": { "insecure": false, "caData": .clusters[0].cluster."certificate-authority-data", "certData": .users[0].user."client-certificate-data", "keyData": .users[0].user."client-key-data" }}' | base64 -w0 | jq --raw-input '[{ "op": "replace", "path": "/data/config", "value": .}]' > /tmp/secret_patch.json
+              kubectl -n {{ .Values.argoCD.namespace }} patch secret {{ include "k3s.fullname" . }} --type='json' --patch-file=/tmp/secret_patch.json
+{{- else }}
+              echo "no action"
+{{- end }}
+              done
+          volumeMounts:
+            - mountPath: /output
+              name: kubeconfig
+              readOnly: true
+          readinessProbe:
+            exec:
+              command:
+                - cat
+                - /tmp/ready
+            periodSeconds: 5
+          startupProbe:
+            exec:
+              command:
+                - cat
+                - /tmp/ready
+            periodSeconds: 10
+            failureThreshold: 30
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: k3s-server
+          persistentVolumeClaim:
+            claimName: k3s-server
+        - name: kubeconfig
+          persistentVolumeClaim:
+            claimName: k3s-kubeconfig
+        - name: k3s-config
+          configMap:
+            name: k3s-config
+            optional: true
+        - name: server-tmpfs0
+          emptyDir:
+            medium: Memory
+        - name: server-tmpfs1
+          emptyDir:
+            medium: Memory
+
