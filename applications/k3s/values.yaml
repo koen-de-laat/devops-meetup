@@ -113,6 +113,7 @@ argoCD:
       cert-issuers:
         repoUrl: https://github.com/koen-de-laat/devops-meetup
         path: applications/cert-issuers
+        namespace: cert-manager
         targetRevision: HEAD
         annotations:
           argocd.argoproj.io/sync-wave: "5"
