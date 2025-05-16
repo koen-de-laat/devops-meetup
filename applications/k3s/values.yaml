@@ -110,6 +110,12 @@ argoCD:
         values:
           installCRDs: true
         injectHost: false
+      cert-issuers:
+        repoUrl: https://github.com/koen-de-laat/devops-meetup
+        path: applications/cert-issuers
+        targetRevision: HEAD
+        annotations:
+          argocd.argoproj.io/sync-wave: "5"
       hello-test:
         repoUrl: https://cloudecho.github.io/charts/
         targetRevision: 0.1.2
