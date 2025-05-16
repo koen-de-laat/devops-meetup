@@ -12,6 +12,10 @@ spec:
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
+  {{- with .Values.argoCD.appNamespace }}
+  sourceNamespaces:
+    - {{ . }}
+  {{- end }}
   destinations:
     - namespace: '*'
       server: {{ include "k3s.apiUrl" . }}
