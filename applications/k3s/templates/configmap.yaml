@@ -7,7 +7,7 @@ data:
     cluster-domain: cluster.local
     write-kubeconfig: /output/kubeconfig.yaml
     write-kubeconfig-mode: 644
-    node-name: lws
+    node-name: meetup-node
     tls-san:
       - {{ include "k3s.apiHost" .}}
       - {{ include "k3s.apiHostExternal" .}}
