@@ -11,6 +11,10 @@ spec:
       services:
         - name: {{ include "k3s.fullname" . }}
           port: 443
+    - match: HostSNIRegexp(`{{ printf "^.+\\.%s$" ( (include "k3s.apiHostExternal" . ) | replace "." "\\." ) }}`)
+      services:
+        - name: {{ include "k3s.fullname" . }}
+          port: 443
   tls:
     passthrough: true
 ---
@@ -23,6 +27,10 @@ spec:
     - web
   routes:
     - match: Host(`{{ include "k3s.apiHostExternal" . }}`)
+      services:
+        - name: {{ include "k3s.fullname" . }}
+          port: 80
+    - match: HostRegexp(`{{ printf "^.+\\.%s$" ( (include "k3s.apiHostExternal" . ) | replace "." "\\." ) }}`)
       services:
         - name: {{ include "k3s.fullname" . }}
           port: 80
