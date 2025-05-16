@@ -28,7 +28,7 @@ spec:
         service:
           type: ClusterIP
           domains:
-            - meetup.koendelaat.nl
+            - koendelaat.nl
           ingressRouteTCP: true
   ignoreDifferences:
     - kind: Secret
