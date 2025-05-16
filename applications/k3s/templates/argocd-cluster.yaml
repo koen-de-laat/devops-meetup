@@ -11,5 +11,6 @@ metadata:
 data:
   name: {{ include "k3s.fullname" . | b64enc }}
   server: {{ include "k3s.apiUrl" . | b64enc }}
+  project: {{ include "k3s.argocdProject" . | b64enc }}
 type: Opaque
 {{- end }}

@@ -28,9 +28,20 @@ spec:
     repoURL: {{ $spec.repoUrl | default $.Values.argoCD.applications.repoUrl }}
     targetRevision: {{ $spec.targetRevision | default $.Values.argoCD.applications.targetRevision }}
 {{- if hasKey $spec "values" }}
+{{- $hosts := list }}
+{{- range $.Values.service.domains }}
+{{- $hosts = append $hosts (printf "%s.%s.%s" $name (include "k3s.hostname" $ ) . ) }}
+{{- end }}
+{{- with merge (default $spec.values dict) (dict "ingress" (dict "hosts" $hosts)) }}
     helm:
       releaseName: {{ $name }}
-      values: {{ ( tpl (toYaml $spec.values) $ ) | fromYaml | toJson  | quote }}
+      valuesObject:
+{{- ( tpl (toYaml .) $ )  | nindent 8 }}
+{{- end }}
+{{- with $spec.valueFiles }}
+      valueFiles:
+{{- toYaml . | nindent 8 }}
+{{- end }}
 {{- end }}
 {{- with $spec.syncPolicy | default $.Values.argoCD.applications.syncPolicy}}
   syncPolicy:

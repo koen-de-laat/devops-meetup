@@ -3,10 +3,10 @@ name: k3s
 description: Virtualized k3s single node cluster
 type: application
 version: 0.1.0
-appVersion: "v1.26.6-k3s1"
+appVersion: "v1.28.5-k3s1"
 
 dependencies:
   - name: postgresql
     condition: postgresql.enabled
-    version: 12.6.5
+    version: 13.2.29
     repository: https://charts.bitnami.com/bitnami

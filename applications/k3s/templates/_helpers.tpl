@@ -87,6 +87,14 @@ external-dns.alpha.kubernetes.io/hostname: {{ join "," $hostnames  | quote }}
 {{- printf "%s.%s" (include "k3s.hostname" . ) (.Values.service.domains | first) }}
 {{- end }}
 
+{{- define "k3s.apiHostExternalAll" -}}
+{{- $hosts := list }}
+{{- range .Values.service.domains }}
+{{- $hosts = append $hosts (printf "%s.%s" (include "k3s.hostname" $ ) . ) }}
+{{- end }}
+{{- mustToJson $hosts }}
+{{- end }}
+
 {{- define "k3s.apiUrl" -}}
 {{- printf "https://%s:6443" (include "k3s.apiHost" . ) }}
 {{- end }}

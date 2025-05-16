@@ -8,7 +8,18 @@ data:
     write-kubeconfig: /output/kubeconfig.yaml
     write-kubeconfig-mode: 644
     node-name: lws
-    tls-san: {{ include "k3s.apiHost" .}}
+    tls-san:
+      - {{ include "k3s.apiHost" .}}
+      - {{ include "k3s.apiHostExternal" .}}
 {{- if .Values.postgresql.enabled }}
     datastore-endpoint: {{ include "k3s.datastore-endpoint" . }}
+{{- end }}
+{{- if .Values.oidc.enabled }}
+    kube-apiserver-arg:
+      - {{ printf "oidc-issuer-url=%s" .Values.oidc.issuer | quote }}
+      - {{ printf "oidc-client-id=%s" .Values.oidc.clientId | quote }}
+      - {{ printf "oidc-username-claim=%s" .Values.oidc.usernameClaim | quote }}
+      - {{ printf "oidc-username-prefix=%s" .Values.oidc.usernamePrefix | quote }}
+      - {{ printf "oidc-groups-claim=%s" .Values.oidc.groupsClaim | quote }}
+      - {{ printf "oidc-groups-prefix=%s" .Values.oidc.groupsPrefix | quote }}
 {{- end }}

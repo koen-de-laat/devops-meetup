@@ -58,6 +58,12 @@ storage:
     config: 10Mi
     server: 100Gi
 
+oidc:
+  enabled: false
+
+cert:
+  subject: {}
+
 postgresql:
   enabled: true
   fullnameOverride: postgresql
@@ -73,8 +79,8 @@ postgresql:
 
 
 argoCD:
-  namespace: argocd
   enabled: true
+  namespace: argocd
   project:
     name: ""
     groups:

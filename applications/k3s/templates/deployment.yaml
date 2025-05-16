@@ -1,3 +1,5 @@
+{{- $k3s_version := .Values.image.tag | default .Chart.AppVersion }}
+{{- $k8s_version := $k3s_version | mustRegexFind "\\d+\\.\\d+\\.\\d+" }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -28,11 +30,36 @@ spec:
       serviceAccountName: {{ include "k3s.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: setup-certs
+          image: "alpine/k8s:{{ $k8s_version }}"
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
+
+              if [ ! -f "/var/lib/rancher/k3s/server/tls/server-ca.crt" ]; then
+              apk add openssl
+              mkdir -p /var/lib/rancher/k3s/server/tls
+              cp /tmp/tls/* /var/lib/rancher/k3s/server/tls/
+              # Generate custom CA certs and keys.
+              curl -sL https://raw.githubusercontent.com/k3s-io/k3s/{{ mustRegexReplaceAll "-k3s" $k3s_version "%2Bk3s" }}/contrib/util/generate-custom-ca-certs.sh | bash -
+              rm -rf /var/lib/rancher/k3s/server/tls/intermediate-ca.* /var/lib/rancher/k3s/server/tls/root-ca.*
+              fi
+
+              ls -alF /var/lib/rancher/k3s/server/tls/
+          volumeMounts:
+            - mountPath: /var/lib/rancher/k3s
+              name: k3s-server
+            - mountPath: /tmp/tls
+              name: k3s-root-ca
+              readOnly: true
       containers:
         - name: k3s
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ $k3s_version }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             - server
@@ -86,7 +113,7 @@ spec:
             - mountPath: /output
               name: kubeconfig
         - name: kubeconfig
-          image: alpine/k8s:1.26.6
+          image: "alpine/k8s:{{ $k8s_version }}"
           command:
             - /bin/sh
             - -c
@@ -157,6 +184,17 @@ spec:
           configMap:
             name: k3s-config
             optional: true
+        - name: k3s-root-ca
+          secret:
+            secretName: {{ .Release.Name }}
+            items:
+              - key: ca.crt
+                path: root-ca.pem
+              - key: tls.crt
+                path: intermediate-ca.pem
+              - key: tls.key
+                path: intermediate-ca.key
+
         - name: server-tmpfs0
           emptyDir:
             medium: Memory

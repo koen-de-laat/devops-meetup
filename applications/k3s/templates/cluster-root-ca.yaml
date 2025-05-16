@@ -1,0 +1,20 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: k3s-root-ca
+  secretName: {{ .Release.Name }}
+  commonName: {{ .Release.Name }}-root-ca
+{{- with .Values.cert.subject }}
+  subject:
+{{- . | toYaml | nindent 4 }}
+{{- end}}
+  isCA: true
+  duration: 43800h0m0s # 5 years
+  privateKey:
+    algorithm: ECDSA
+    size: 256
