@@ -186,7 +186,7 @@ spec:
             optional: true
         - name: k3s-root-ca
           secret:
-            secretName: {{ .Release.Name }}
+            secretName: {{ .Release.Name }}-cert
             items:
               - key: ca.crt
                 path: root-ca.pem
