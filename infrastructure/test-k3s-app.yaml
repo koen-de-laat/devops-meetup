@@ -16,8 +16,10 @@ spec:
     targetRevision: HEAD
     helm:
       parameters:
-        - name: "argoCD.applications.targetRevision"
-          value: "$ARGOCD_APP_SOURCE_TARGET_REVISION"
+        - name: argoCD.applications.targetRevision
+          value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+        - name: argoCD.namespace
+          value: meetup
   ignoreDifferences:
     - kind: Secret
       jsonPointers:
