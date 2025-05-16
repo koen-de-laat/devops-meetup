@@ -81,6 +81,7 @@ postgresql:
 argoCD:
   enabled: true
   namespace: argocd
+  appNamespace: ""
   project:
     name: ""
     groups:

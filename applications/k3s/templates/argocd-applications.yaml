@@ -4,7 +4,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: '{{ printf "%s-%s" $.Release.Name $name }}'
-  namespace: {{ $.Values.argoCD.namespace }}
+  namespace: {{ $.Values.argoCD.appNamespace | default $.Values.argoCD.namespace }}
 {{- with merge ($spec.annotations | default dict) $.Values.argoCD.applications.annotations}}
   annotations:
 {{- toYaml . | nindent 4 }}
