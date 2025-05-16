@@ -15,10 +15,11 @@ spec:
     repoURL: https://github.com/koen-de-laat/devops-meetup
     targetRevision: HEAD
     helm:
+      parameters:
+        - name: argoCD.applications.targetRevisions
+          value: $ARGOCD_APP_SOURCE_TARGET_REVISION
       valuesObject:
         argoCD:
-          applications:
-            targetRevisions: $ARGOCD_APP_SOURCE_TARGET_REVISION
           appNamespace: meetup
           cluster:
             labels:
