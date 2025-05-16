@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: meetup
+  namespace: argocd
+spec:
+#  clusterResourceWhitelist:
+#    - group: '*'
+#      kind: '*'
+  description: Meetup project
+  destinations:
+    - namespace: 'meetup'
+      server: 'https://kubernetes.default.svc'
+  sourceRepos:
+    - '*'
