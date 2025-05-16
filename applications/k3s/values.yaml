@@ -106,6 +106,7 @@ argoCD:
           argocd.argoproj.io/sync-wave: "4"
         values:
           installCRDs: true
+        injectHost: false
       hello-test:
         repoUrl: https://cloudecho.github.io/charts/
         targetRevision: 0.1.2

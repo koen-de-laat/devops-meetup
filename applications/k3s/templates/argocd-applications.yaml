@@ -27,7 +27,7 @@ spec:
 {{- end }}
     repoURL: {{ $spec.repoUrl | default $.Values.argoCD.applications.repoUrl }}
     targetRevision: {{ $spec.targetRevision | default $.Values.argoCD.applications.targetRevision }}
-{{- if hasKey $spec "values" }}
+{{- if and (hasKey $spec "values") ( $spec.injectHost | default true ) }}
 {{- $hosts := list }}
 {{- range $.Values.service.domains }}
 {{- $hosts = append $hosts (printf "%s.%s.%s" $name (include "k3s.hostname" $ ) . ) }}
