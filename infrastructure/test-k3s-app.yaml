@@ -23,6 +23,8 @@ spec:
           cluster:
             labels:
               skip-default-apps: "true"
+        storage:
+          storageClassNameK3s: local-path
   ignoreDifferences:
     - kind: Secret
       jsonPointers:

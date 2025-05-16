@@ -54,6 +54,7 @@ affinity: {}
 
 storage:
   storageClassName: nfs
+  storageClassNameK3s: ""
   size:
     config: 10Mi
     server: 100Gi
