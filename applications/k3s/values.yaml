@@ -128,6 +128,7 @@ argoCD:
         values:
           argoCD:
             namespace: "{{ .Values.argoCD.appNamespace | default .Values.argoCD.namespace }}"
+            project: "{{ include \"k3s.argocdProject\" . }}"
           destination:
             server: "{{ include \"k3s.apiUrl\" . }}"
           hostnames:

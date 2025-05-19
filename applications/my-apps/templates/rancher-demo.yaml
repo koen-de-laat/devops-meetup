@@ -6,11 +6,11 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: meetup-k3s
+  project: {{ .Values.argoCD.project }}
   source:
     repoURL: https://github.com/koen-de-laat/devops-meetup
     path: applications/rancher-demo
-    targetRevision: {{ .Values.targetRevision}}
+    targetRevision: {{ .Values.targetRevision }}
     helm:
       releaseName: rancher-demo
       valuesObject:
