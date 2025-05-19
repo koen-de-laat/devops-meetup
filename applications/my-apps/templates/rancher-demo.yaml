@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: '{{ printf "%s-racher-demo" $.Release.Name }}'
+  namespace: {{ .Values.argoCD.namespace }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: meetup-k3s
+  source:
+    repoURL: https://github.com/koen-de-laat/devops-meetup
+    path: applications/rancher-demo
+    targetRevision: {{ .Values.targetRevision}}
+    helm:
+      releaseName: rancher-demo
+      valuesObject:
+        rancher-demo:
+          ingress:
+            annotations:
+              cert-manager.io/cluster-issuer: letsencrypt
+            enabled: true
+            host: {{ printf "demo.%s" (.Values.hostnames | first ) }}
+            tls:
+              - hosts:
+                  - {{ printf "demo.%s" (.Values.hostnames | first ) }}
+                secretName: demo-tls
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: rancher-demo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

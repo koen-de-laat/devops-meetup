@@ -117,35 +117,15 @@ argoCD:
         targetRevision: HEAD
         annotations:
           argocd.argoproj.io/sync-wave: "5"
-      hello-test:
-        repoUrl: https://cloudecho.github.io/charts/
-        targetRevision: 0.1.2
-        chart: hello
-        values:
-          ingress:
-            enabled: true
-            annotations:
-              cert-manager.io/cluster-issuer: letsencrypt
-            hosts:
-              - host: "{{ include \"k3s.appHostname\" (dict \"Values\" $.Values \"Release\" $.Release \"name\" \"hello\") }}"
-                paths:
-                  - path: /
-                    pathType: ImplementationSpecific
-            tls:
-              - secretName: hello-tls
-                hosts:
-                  - "{{ include \"k3s.appHostname\" (dict \"Values\" $.Values \"Release\" $.Release \"name\" \"hello\") }}"
-      rancher-demo:
+      my-apps:
         repoUrl: https://github.com/koen-de-laat/devops-meetup
-        path: applications/rancher-demo
+        path: applications/my-apps
+        targetRevision: $ARGOCD_APP_SOURCE_TARGET_REVISION
+        destination:
+          namespace: $ARGOCD_APP_NAMESPACE
+          server: https://kubernetes.default.svc
+        injectHost: false
         values:
-          rancher-demo:
-            ingress:
-              enabled: true
-              annotations:
-                cert-manager.io/cluster-issuer: letsencrypt
-              host: "{{ include \"k3s.appHostname\" (dict \"Values\" $.Values \"Release\" $.Release \"name\" \"demo\") }}"
-              tls:
-                - secretName: demo-tls
-                  hosts:
-                    - "{{ include \"k3s.appHostname\" (dict \"Values\" $.Values \"Release\" $.Release \"name\" \"demo\") }}"
+          destination:
+            server: "{{ include \"k3s.apiUrl\" . }}"
+          hostnames: "{{ include \"k3s.apiHostExternalAll\" . }}"

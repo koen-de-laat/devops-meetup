@@ -1,0 +1,42 @@
+argoCD:
+  namespace: argocd
+destination:
+  server: https://kubernetes.default.svc
+
+hostnames: []
+
+targetRevision: HEAD
+
+#
+#      hello-test:
+#        repoUrl: https://cloudecho.github.io/charts/
+#        targetRevision: 0.1.2
+#        chart: hello
+#        values:
+#          ingress:
+#            enabled: true
+#            annotations:
+#              cert-manager.io/cluster-issuer: letsencrypt
+#            hosts:
+#              - host: "{{ include \"k3s.appHostname\" (dict \"Values\" $.Values \"Release\" $.Release \"name\" \"hello\") }}"
+#                paths:
+#                  - path: /
+#                    pathType: ImplementationSpecific
+#            tls:
+#              - secretName: hello-tls
+#                hosts:
+#                  - "{{ include \"k3s.appHostname\" (dict \"Values\" $.Values \"Release\" $.Release \"name\" \"hello\") }}"
+#      rancher-demo:
+#        repoUrl: https://github.com/koen-de-laat/devops-meetup
+#        path: applications/rancher-demo
+#        values:
+#          rancher-demo:
+#            ingress:
+#              enabled: true
+#              annotations:
+#                cert-manager.io/cluster-issuer: letsencrypt
+#              host: "{{ include \"k3s.appHostname\" (dict \"Values\" $.Values \"Release\" $.Release \"name\" \"demo\") }}"
+#              tls:
+#                - secretName: demo-tls
+#                  hosts:
+#                    - "{{ include \"k3s.appHostname\" (dict \"Values\" $.Values \"Release\" $.Release \"name\" \"demo\") }}"

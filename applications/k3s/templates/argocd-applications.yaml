@@ -15,8 +15,12 @@ metadata:
 {{- end}}
 spec:
   destination:
+  {{- if $spec.destination }}
+    {{ toYaml $spec.destination | nindent 4 }}
+  {{- else }}
     namespace: {{ $spec.namespace | default $name}}
     server: {{ include "k3s.apiUrl" $ }}
+  {{- end }}
   project: {{ include "k3s.argocdProject" $ }}
   source:
 {{- with $spec.path }}
