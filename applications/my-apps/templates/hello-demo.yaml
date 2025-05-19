@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: '{{ printf "%s-hello-demo" $.Release.Name }}'
+  namespace: {{ .Values.argoCD.namespace }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: {{ .Values.argoCD.project }}
+  source:
+    repoURL: https://cloudecho.github.io/charts/
+    chart: hello
+    targetRevision: 0.1.2
+    helm:
+      releaseName: hello-demo
+      valuesObject:
+        ingress:
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt
+          enabled: true
+          hosts:
+            - host: {{ printf "hello.%s" (.Values.hostnames | first ) }}
+              paths:
+               - path: /
+                 pathType: ImplementationSpecific
+          tls:
+            - hosts:
+                - {{ printf "hello.%s" (.Values.hostnames | first ) }}
+              secretName: hello-tls
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: hello-demo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
