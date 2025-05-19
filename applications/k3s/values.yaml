@@ -120,7 +120,6 @@ argoCD:
       my-apps:
         repoUrl: https://github.com/koen-de-laat/devops-meetup
         path: applications/my-apps
-        targetRevision: $ARGOCD_APP_SOURCE_TARGET_REVISION
         project: default
         destination:
           namespace: argocd
