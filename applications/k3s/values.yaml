@@ -128,4 +128,5 @@ argoCD:
         values:
           destination:
             server: "{{ include \"k3s.apiUrl\" . }}"
-          hostnames: "{{ ( include \"k3s.apiHostExternalAll\" . ) | mustFromJson | toYaml | nindent 2 }}"
+          hostnames:
+            - "{{ include \"k3s.apiHostExternal\" . }}"
