@@ -1,5 +1,5 @@
 rancher-demo:
-  replicaCount: 5
+  replicaCount: 4
 
   app:
     localization:
