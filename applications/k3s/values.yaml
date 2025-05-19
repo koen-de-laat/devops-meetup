@@ -126,6 +126,8 @@ argoCD:
           server: https://kubernetes.default.svc
         injectHost: false
         values:
+          argoCD:
+            namespace: "{{ .Values.argoCD.appNamespace | default .Values.argoCD.namespace }}"
           destination:
             server: "{{ include \"k3s.apiUrl\" . }}"
           hostnames:
