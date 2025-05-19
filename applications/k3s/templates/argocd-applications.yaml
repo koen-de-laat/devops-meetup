@@ -39,13 +39,17 @@ spec:
 {{- if $spec.injectHost }}
 {{- $values = merge (default $spec.values dict) (dict "ingress" (dict "hosts" $hosts)) }}
 {{- end }}
-{{- if or $values $spec.valueFiles }}
+{{- if or ( or $values $spec.valueFiles ) $spec.parameters }}
     helm:
       releaseName: {{ $name }}
       valuesObject:
 {{- ( tpl (toYaml $values ) $ )  | nindent 8 }}
 {{- with $spec.valueFiles }}
       valueFiles:
+{{- toYaml . | nindent 8 }}
+{{- end }}
+{{- with $spec.parameters }}
+      parameters:
 {{- toYaml . | nindent 8 }}
 {{- end }}
 {{- end }}
