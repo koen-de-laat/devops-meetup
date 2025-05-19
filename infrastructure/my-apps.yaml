@@ -18,6 +18,8 @@ spec:
       parameters:
         - name: targetRevision
           value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+        - name: destination.namespacePrefix
+          value: $ARGOCD_APP_NAMESPACE
       releaseName: main
       valuesObject:
         argoCD:

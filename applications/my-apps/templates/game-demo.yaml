@@ -25,7 +25,7 @@ spec:
               secretName: games-tls
   destination:
     server: {{ .Values.destination.server }}
-    namespace: games
+    namespace: {{ printf "%sgames" ( include "my-apps.namespacePrefix" . ) }}
   syncPolicy:
     automated:
       prune: true

@@ -29,7 +29,7 @@ spec:
               secretName: hello-tls
   destination:
     server: {{ .Values.destination.server }}
-    namespace: hello-demo
+    namespace: {{ printf "%shello" ( include "my-apps.namespacePrefix" . ) }}
   syncPolicy:
     automated:
       prune: true

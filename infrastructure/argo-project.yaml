@@ -4,15 +4,15 @@ metadata:
   name: meetup
   namespace: argocd
 spec:
-#  clusterResourceWhitelist:
-#    - group: '*'
-#      kind: '*'
+  clusterResourceWhitelist:
+    - group: ''
+      kind: 'Namespace'
   sourceNamespaces:
     - meetup
     - argocd
   description: Meetup project
   destinations:
-    - namespace: 'meetup'
+    - namespace: 'meetup*'
       server: 'https://kubernetes.default.svc'
     - namespace: 'argocd'
       server: 'https://kubernetes.default.svc'

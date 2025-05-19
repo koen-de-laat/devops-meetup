@@ -26,7 +26,7 @@ spec:
                 secretName: demo-tls
   destination:
     server: {{ .Values.destination.server }}
-    namespace: rancher-demo
+    namespace: {{ printf "%srancher-demo" ( include "my-apps.namespacePrefix" . ) }}
   syncPolicy:
     automated:
       prune: true
