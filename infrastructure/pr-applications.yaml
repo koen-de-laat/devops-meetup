@@ -1,0 +1,43 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: meetup-pr-apps
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - pullRequest:
+        github:
+          appSecretName: argocd-repo-creds-github-koen-de-laat
+          labels:
+            - preview
+          owner: koen-de-laat
+          repo: devops-meetup
+  template:
+    metadata:
+      name: 'my-apps-pr{{.number}}'
+      namespace: meetup
+    spec:
+      destination:
+        namespace: meetup
+        server: https://kubernetes.default.svc
+      project: meetup
+      source:
+        repoURL: https://github.com/koen-de-laat/devops-meetup
+        path: applications/my-apps
+        targetRevision: '{{.head_sha}}'
+        helm:
+          parameters:
+            - name: targetRevision
+              value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+          releaseName: main
+          valuesObject:
+            argoCD:
+              namespace: meetup
+              project: meetup
+            destination:
+              server: https://kubernetes.default.svc
+              namespacePrefix: 'meetup-pr{{.number}}'
+            hostnames:
+              - 'pr{{.number}}.meetup.koendelaat.nl'

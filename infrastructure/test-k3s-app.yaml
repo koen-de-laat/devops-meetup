@@ -1,51 +1,51 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-  name: meetup-k3s
-  namespace: argocd
-spec:
-  destination:
-    namespace: meetup
-    server: https://kubernetes.default.svc
-  project: meetup
-  source:
-    path: applications/k3s
-    repoURL: https://github.com/koen-de-laat/devops-meetup
-    targetRevision: HEAD
-    helm:
-      parameters:
-        - name: argoCD.applications.targetRevision
-#          value: $ARGOCD_APP_SOURCE_TARGET_REVISION
-          value: main
-      valuesObject:
-        argoCD:
-          appNamespace: meetup
-          cluster:
-            labels:
-              skip-default-apps: "true"
-          applications:
-            specs:
-              my-apps:
-                project: meetup
-                destination:
-                  namespace: meetup
-        storage:
-          storageClassNameK3s: local-path
-        service:
-          type: ClusterIP
-          domains:
-            - koendelaat.nl
-          ingressRouteTCP: true
-  ignoreDifferences:
-    - kind: Secret
-      jsonPointers:
-       - /data/config
-      namespace: argocd
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
+#apiVersion: argoproj.io/v1alpha1
+#kind: Application
+#metadata:
+#  finalizers:
+#    - resources-finalizer.argocd.argoproj.io
+#  name: meetup-k3s
+#  namespace: argocd
+#spec:
+#  destination:
+#    namespace: meetup
+#    server: https://kubernetes.default.svc
+#  project: meetup
+#  source:
+#    path: applications/k3s
+#    repoURL: https://github.com/koen-de-laat/devops-meetup
+#    targetRevision: HEAD
+#    helm:
+#      parameters:
+#        - name: argoCD.applications.targetRevision
+##          value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+#          value: main
+#      valuesObject:
+#        argoCD:
+#          appNamespace: meetup
+#          cluster:
+#            labels:
+#              skip-default-apps: "true"
+#          applications:
+#            specs:
+#              my-apps:
+#                project: meetup
+#                destination:
+#                  namespace: meetup
+#        storage:
+#          storageClassNameK3s: local-path
+#        service:
+#          type: ClusterIP
+#          domains:
+#            - koendelaat.nl
+#          ingressRouteTCP: true
+#  ignoreDifferences:
+#    - kind: Secret
+#      jsonPointers:
+#       - /data/config
+#      namespace: argocd
+#  syncPolicy:
+#    automated:
+#      prune: true
+#      selfHeal: true
+#    syncOptions:
+#      - CreateNamespace=true
