@@ -31,9 +31,10 @@ spec:
           parameters:
             - name: targetRevision
               value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+            - name: argoCD.applications.targetRevision
+              value: $ARGOCD_APP_SOURCE_TARGET_REVISION
           releaseName: 'pr{{.number}}'
           valuesObject:
-
             argoCD:
               appNamespace: meetup
               cluster:
