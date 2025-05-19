@@ -45,6 +45,8 @@ spec:
                     project: meetup
                     destination:
                       namespace: meetup
+                    values:
+                      namePrefix: 'meetup-eph-pr{{.number}}'
             storage:
               storageClassNameK3s: local-path
             service:

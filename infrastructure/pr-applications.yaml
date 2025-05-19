@@ -33,6 +33,7 @@ spec:
               value: $ARGOCD_APP_SOURCE_TARGET_REVISION
           releaseName: 'pr{{.number}}'
           valuesObject:
+            namePrefix: 'meetup-pr{{.number}}'
             argoCD:
               namespace: meetup
               project: meetup
