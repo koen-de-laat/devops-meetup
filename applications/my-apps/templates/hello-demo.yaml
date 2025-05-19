@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: '{{ printf "%s-hello-demo" $.Release.Name }}'
+  name: '{{ printf "%shello-demo" ( include "my-apps.namePrefix" . ) }}'
   namespace: {{ .Values.argoCD.namespace }}
   finalizers:
     - resources-finalizer.argocd.argoproj.io

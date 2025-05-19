@@ -33,7 +33,6 @@ spec:
               value: $ARGOCD_APP_SOURCE_TARGET_REVISION
             - name: argoCD.applications.targetRevision
               value: $ARGOCD_APP_SOURCE_TARGET_REVISION
-          releaseName: 'pr{{.number}}'
           valuesObject:
             argoCD:
               appNamespace: meetup
@@ -51,7 +50,7 @@ spec:
             service:
               type: ClusterIP
               domains:
-                - 'pr{{.number}}-eph.meetup.koendelaat.nl'
+                - 'ephemeral.meetup.koendelaat.nl'
               ingressRouteTCP: true
       syncPolicy:
         automated:

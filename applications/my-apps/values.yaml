@@ -1,3 +1,4 @@
+namePrefix: ""
 argoCD:
   namespace: argocd
   project: default
