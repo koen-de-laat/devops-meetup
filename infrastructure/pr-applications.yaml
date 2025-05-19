@@ -41,3 +41,9 @@ spec:
               namespacePrefix: 'meetup-pr{{.number}}'
             hostnames:
               - 'pr{{.number}}.meetup.koendelaat.nl'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
