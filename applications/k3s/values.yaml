@@ -132,6 +132,6 @@ argoCD:
             server: "{{ include \"k3s.apiUrl\" . }}"
           hostnames:
             - "{{ include \"k3s.apiHostExternal\" . }}"
-          parameters:
-            - name: targetRevision
-              value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+        parameters:
+          - name: targetRevision
+            value: $ARGOCD_APP_SOURCE_TARGET_REVISION
