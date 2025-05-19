@@ -25,6 +25,11 @@ spec:
           cluster:
             labels:
               skip-default-apps: "true"
+          applications:
+            specs:
+              my-apps:
+                destination:
+                  namespace: meetup
         storage:
           storageClassNameK3s: local-path
         service:

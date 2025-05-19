@@ -122,7 +122,7 @@ argoCD:
         path: applications/my-apps
         targetRevision: $ARGOCD_APP_SOURCE_TARGET_REVISION
         destination:
-          namespace: $ARGOCD_APP_NAMESPACE
+          namespace: argocd
           server: https://kubernetes.default.svc
         injectHost: false
         values:
