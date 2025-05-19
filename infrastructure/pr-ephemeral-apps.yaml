@@ -1,0 +1,60 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: meetup-pr-ephemeral-apps
+  namespace: meetup
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - pullRequest:
+        github:
+          appSecretName: argocd-repo-creds-github-koen-de-laat
+          labels:
+            - preview-ephemeral
+          owner: koen-de-laat
+          repo: devops-meetup
+  template:
+    metadata:
+      name: 'meetup-k3s-pr{{.number}}'
+      namespace: meetup
+    spec:
+      destination:
+        namespace: meetup
+        server: https://kubernetes.default.svc
+      project: meetup
+      source:
+        repoURL: https://github.com/koen-de-laat/devops-meetup
+        path: applications/k3s
+        targetRevision: '{{.head_sha}}'
+        helm:
+          parameters:
+            - name: targetRevision
+              value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+          releaseName: 'pr{{.number}}'
+          valuesObject:
+
+            argoCD:
+              appNamespace: meetup
+              cluster:
+                labels:
+                  skip-default-apps: "true"
+              applications:
+                specs:
+                  my-apps:
+                    project: meetup
+                    destination:
+                      namespace: meetup
+            storage:
+              storageClassNameK3s: local-path
+            service:
+              type: ClusterIP
+              domains:
+                - 'pr{{.number}}-eph.meetup.koendelaat.nl'
+              ingressRouteTCP: true
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
