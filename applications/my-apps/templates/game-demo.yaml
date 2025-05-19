@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: '{{ printf "%s-game-demo" $.Release.Name }}'
+  namespace: {{ .Values.argoCD.namespace }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: {{ .Values.argoCD.project }}
+  source:
+    repoURL: https://github.com/koen-de-laat/devops-meetup
+    path: applications/games
+    targetRevision: {{ .Values.targetRevision}}
+    helm:
+      releaseName: games
+      valuesObject:
+        ingress:
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt
+          enabled: true
+          host: {{ printf "games.%s" (.Values.hostnames | first ) }}
+          tls:
+            - hosts:
+                - {{ printf "games.%s" (.Values.hostnames | first ) }}
+              secretName: games-tls
+  destination:
+    server: {{ .Values.destination.server }}
+    namespace: games
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
