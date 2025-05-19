@@ -28,6 +28,7 @@ spec:
           applications:
             specs:
               my-apps:
+                project: meetup
                 destination:
                   namespace: meetup
         storage:
