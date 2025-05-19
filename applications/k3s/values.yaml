@@ -67,6 +67,7 @@ cert:
 
 postgresql:
   enabled: true
+  fullnameOverride: postgresql
   auth:
     postgresPassword: MyDbPassword
     database: kubernetes
