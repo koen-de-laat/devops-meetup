@@ -34,6 +34,8 @@ spec:
             - name: argoCD.applications.targetRevision
               value: $ARGOCD_APP_SOURCE_TARGET_REVISION
           valuesObject:
+            postgresql:
+              fullnameOverride: 'meetup-k3s-pr{{.number}}-psql'
             argoCD:
               appNamespace: meetup
               cluster:
