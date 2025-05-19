@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  name: my-apps
+  namespace: meetup
+spec:
+  destination:
+    namespace: meetup
+    server: https://kubernetes.default.svc
+  project: meetup
+  source:
+    repoURL: https://github.com/koen-de-laat/devops-meetup
+    path: applications/my-apps
+    targetRevision: main
+    helm:
+      parameters:
+        - name: targetRevision
+          value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+      releaseName: main
+      valuesObject:
+        argoCD:
+          namespace: meetup
+          project: meetup
+        destination:
+          server: https://kubernetes.default.svc
+        hostnames:
+          - meetup.koendelaat.nl
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
