@@ -67,7 +67,6 @@ cert:
 
 postgresql:
   enabled: true
-  fullnameOverride: postgresql
   auth:
     postgresPassword: MyDbPassword
     database: kubernetes
@@ -76,7 +75,6 @@ postgresql:
   primary:
     persistence:
       storageClass: nfs
-      existingClaim: postgresql-claim
 
 
 argoCD:

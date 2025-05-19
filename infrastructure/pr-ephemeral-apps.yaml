@@ -29,8 +29,6 @@ spec:
         targetRevision: '{{.head_sha}}'
         helm:
           parameters:
-            - name: targetRevision
-              value: $ARGOCD_APP_SOURCE_TARGET_REVISION
             - name: argoCD.applications.targetRevision
               value: $ARGOCD_APP_SOURCE_TARGET_REVISION
           valuesObject:

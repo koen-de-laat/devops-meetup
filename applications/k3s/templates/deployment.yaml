@@ -176,13 +176,13 @@ spec:
       volumes:
         - name: k3s-server
           persistentVolumeClaim:
-            claimName: k3s-server
+            claimName: {{ include "k3s.fullname" . }}-server
         - name: kubeconfig
           persistentVolumeClaim:
-            claimName: k3s-kubeconfig
+            claimName: {{ include "k3s.fullname" . }}-kubeconfig
         - name: k3s-config
           configMap:
-            name: k3s-config
+            name: {{ include "k3s.fullname" . }}-config
             optional: true
         - name: k3s-root-ca
           secret:

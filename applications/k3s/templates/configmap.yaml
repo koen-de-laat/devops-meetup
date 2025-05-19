@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: k3s-config
+  name: {{ include "k3s.fullname" . }}-config
 data:
   config.yaml: |
     cluster-domain: cluster.local
