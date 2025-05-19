@@ -76,6 +76,9 @@ postgresql:
   primary:
     persistence:
       storageClass: nfs
+    persistentVolumeClaimRetentionPolicy:
+      enabled: true
+      whenDeleted: Delete
 
 
 argoCD:
