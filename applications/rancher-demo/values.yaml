@@ -1,10 +1,10 @@
 rancher-demo:
-  replicaCount: 3
+  replicaCount: 5
 
   app:
     localization:
       title: "DevOps MeetUp Demo App"
-      pets: "cows"  # available pets include 'cows' and 'chameleons' and possibly 'cowmeleons'
+      pets: "chameleons"  # available pets include 'cows' and 'chameleons' and possibly 'cowmeleons'
       color: "black"  # container background color (any color name from the CSS pallete)
 
   ingress:
